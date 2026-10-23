@@ -1,0 +1,3 @@
+{"parentUuid":null,"isSidechain":true,"agentId":"abc","type":"user","uuid":"su1","timestamp":"2026-10-20T10:00:08.500Z","message":{"role":"user","content":"Look for..."}}
+{"parentUuid":"su1","isSidechain":true,"agentId":"abc","type":"assistant","uuid":"sa1","timestamp":"2026-10-20T10:00:09.500Z","message":{"id":"m","role":"assistant","content":[{"type":"text","text":"Searching for the scheduler."}]}}
+{"parentUuid":"sa1","isSidechain":true,"agentId":"abc","type":"assistant","uuid":"sa2","timestamp":"2026-10-20T10:00:09.600Z","message":{"id":"m","role":"assistant","content":[{"type":"tool_use","id":"toolu_grep1","name":"Grep","input":{"pattern":"AlarmManager","path":"src"}}]}}

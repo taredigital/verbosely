@@ -1,0 +1,222 @@
+{
+  "name": "verbosely",
+  "displayName": "Verbosely: Live Agent Activity",
+  "description": "Verbose mode for Claude Code and Codex. See what your agent says and does while it works, not just its final answer.",
+  "version": "0.2.1",
+  "publisher": "mx92",
+  "author": "Tare Digital",
+  "license": "GPL-3.0-only",
+  "homepage": "https://taredigital.com/verbosely/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/taredigital/verbosely"
+  },
+  "bugs": {
+    "url": "https://github.com/taredigital/verbosely/issues"
+  },
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "AI",
+    "Other"
+  ],
+  "keywords": [
+    "claude code",
+    "codex",
+    "verbose",
+    "agent",
+    "activity",
+    "live",
+    "narration",
+    "ai"
+  ],
+  "icon": "media/icon.png",
+  "galleryBanner": {
+    "color": "#0d1117",
+    "theme": "dark"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true,
+      "restrictedConfigurations": [
+        "verbosely.initialHistoryMB",
+        "verbosely.maxItems",
+        "verbosely.exportRedactSecrets"
+      ]
+    },
+    "virtualWorkspaces": false
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "verbosely",
+          "title": "Verbosely",
+          "icon": "media/verbosely.svg"
+        }
+      ]
+    },
+    "views": {
+      "verbosely": [
+        {
+          "type": "webview",
+          "id": "verbosely.feed",
+          "name": "Activity"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "verbosely.exportMarkdown",
+        "title": "Export Session as Markdown",
+        "category": "Verbosely",
+        "icon": "$(export)"
+      },
+      {
+        "command": "verbosely.showFailures",
+        "title": "Show Failed Steps",
+        "category": "Verbosely",
+        "icon": "$(error)"
+      },
+      {
+        "command": "verbosely.followLive",
+        "title": "Follow Live Session",
+        "category": "Verbosely",
+        "icon": "$(broadcast)"
+      },
+      {
+        "command": "verbosely.popOut",
+        "title": "Pop Out Feed (Always on Top)",
+        "category": "Verbosely",
+        "icon": "$(pinned)"
+      },
+      {
+        "command": "verbosely.openInBrowser",
+        "title": "Open Feed in Browser (Picture-in-Picture)",
+        "category": "Verbosely",
+        "icon": "$(globe)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "verbosely.popOut",
+          "when": "view == verbosely.feed",
+          "group": "navigation@0"
+        },
+        {
+          "command": "verbosely.followLive",
+          "when": "view == verbosely.feed",
+          "group": "navigation@1"
+        },
+        {
+          "command": "verbosely.exportMarkdown",
+          "when": "view == verbosely.feed",
+          "group": "navigation@2"
+        },
+        {
+          "command": "verbosely.openInBrowser",
+          "when": "view == verbosely.feed",
+          "group": "more@1"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Verbosely",
+      "properties": {
+        "verbosely.agents": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "claude",
+              "codex"
+            ],
+            "enumDescriptions": [
+              "Claude Code",
+              "OpenAI Codex"
+            ]
+          },
+          "uniqueItems": true,
+          "default": [
+            "claude",
+            "codex"
+          ],
+          "description": "Which agents' sessions to show. Reload the window after changing this."
+        },
+        "verbosely.popOut.alwaysOnTop": {
+          "type": "boolean",
+          "default": true,
+          "description": "Keep the popped-out feed window above other windows."
+        },
+        "verbosely.popOut.compact": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the popped-out feed window in compact mode, without tabs and toolbars."
+        },
+        "verbosely.timestamps": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show how long each step took, the time of your prompts and the agent's messages, and how long the current turn has been running."
+        },
+        "verbosely.initialHistoryMB": {
+          "type": "number",
+          "default": 4,
+          "minimum": 1,
+          "maximum": 64,
+          "description": "How much of a session log (from the end) to load when a session is opened. Larger logs are trimmed to their most recent part. Only read from your user settings.",
+          "scope": "application"
+        },
+        "verbosely.maxItems": {
+          "type": "number",
+          "default": 4000,
+          "minimum": 200,
+          "description": "Maximum number of feed entries kept in memory per session. Only read from your user settings.",
+          "scope": "application",
+          "maximum": 20000
+        },
+        "verbosely.exportRedactSecrets": {
+          "type": "boolean",
+          "default": true,
+          "scope": "application",
+          "description": "Replace things that look like secrets (API keys, tokens, private keys, passwords in URLs) with [redacted] in the Markdown export. Only read from your user settings."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "watch": "node esbuild.config.mjs --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test",
+    "package": "vsce package",
+    "vscode:prepublish": "node esbuild.config.mjs --production"
+  },
+  "dependencies": {
+    "preact": "^10.24.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.20.5",
+    "@types/vscode": "^1.100.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^9.17.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.3",
+    "typescript": "^5.4.0",
+    "typescript-eslint": "^8.58.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  }
+}

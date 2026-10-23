@@ -1,0 +1,1073 @@
+/* The feed's styles, shared by the side bar, the pop-out and the browser
+   page. Colours and fonts come from VS Code's theme variables. */
+
+/* ---------------------------------------------------------------------------
+   Theme
+   ------------------------------------------------------------------------ */
+
+:root {
+  --fg: var(--vscode-foreground);
+  --muted: var(--vscode-descriptionForeground);
+  --bg: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  --card: var(--vscode-editorWidget-background, rgba(127, 127, 127, 0.08));
+  --border: var(--vscode-widget-border, rgba(127, 127, 127, 0.25));
+  --accent: var(--vscode-focusBorder);
+  --ok: var(--vscode-testing-iconPassed, #3fb950);
+  --err: var(--vscode-errorForeground, #f85149);
+  --code-bg: var(--vscode-textCodeBlock-background, rgba(127, 127, 127, 0.12));
+  --mono: var(--vscode-editor-font-family, monospace);
+  --warn: var(
+    --vscode-list-warningForeground,
+    var(--vscode-editorWarning-foreground, #9a6700)
+  );
+}
+
+/* Browser page and its picture-in-picture window: VS Code's theme variables
+   don't exist there, so supply equivalents that follow the system theme. */
+html[data-mode='browser'] {
+  --vscode-foreground: #1f2328;
+  --vscode-descriptionForeground: #59636e;
+  --vscode-sideBar-background: #ffffff;
+  --vscode-editor-background: #ffffff;
+  --vscode-editorWidget-background: #f6f8fa;
+  --vscode-widget-border: #d1d9e0;
+  --vscode-focusBorder: #0969da;
+  --vscode-testing-iconPassed: #1a7f37;
+  --vscode-errorForeground: #d1242f;
+  --vscode-textCodeBlock-background: #eff2f5;
+  --vscode-textLink-foreground: #0969da;
+  --vscode-button-background: #0969da;
+  --vscode-button-foreground: #ffffff;
+  --vscode-badge-background: #ddf4ff;
+  --vscode-badge-foreground: #0550ae;
+  --vscode-list-hoverBackground: #eef1f4;
+  --vscode-list-warningForeground: #9a6700;
+  --vscode-font-family:
+    'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system,
+    BlinkMacSystemFont, sans-serif;
+  --vscode-font-size: 14px;
+  --vscode-editor-font-family:
+    'Cascadia Mono', Consolas, ui-monospace, 'SF Mono', Menlo, monospace;
+  --vscode-editor-font-size: 13px;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-mode='browser'] {
+    --vscode-foreground: #e6edf3;
+    --vscode-descriptionForeground: #9198a1;
+    --vscode-sideBar-background: #0d1117;
+    --vscode-editor-background: #0d1117;
+    --vscode-editorWidget-background: #161b22;
+    --vscode-widget-border: #30363d;
+    --vscode-focusBorder: #4493f8;
+    --vscode-testing-iconPassed: #3fb950;
+    --vscode-errorForeground: #f85149;
+    --vscode-textCodeBlock-background: #1c2129;
+    --vscode-textLink-foreground: #4493f8;
+    --vscode-button-background: #1f6feb;
+    --vscode-button-foreground: #ffffff;
+    --vscode-badge-background: #1f3a5f;
+    --vscode-badge-foreground: #9ecbff;
+    --vscode-list-hoverBackground: #1c2129;
+    --vscode-list-warningForeground: #d29922;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Layout
+   ------------------------------------------------------------------------ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: var(--fg);
+  background: var(--bg);
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size, 13px);
+  font-weight: var(--vscode-font-weight, normal);
+  line-height: 1.5;
+}
+
+body[data-mode='panel'] {
+  background: var(--vscode-editor-background);
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+/* Flex children default to min-width: auto, so one long unbroken line (a
+   command, a path) would stretch the whole feed wider than its window.
+   Let them shrink so text wraps or truncates instead. */
+.app > *,
+.timeline > *,
+.steps-body > *,
+.agent-body > * {
+  min-width: 0;
+}
+
+.muted,
+.empty {
+  color: var(--muted);
+}
+
+.empty {
+  padding: 16px 12px;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------------
+   Header: session, status, bookmarks, view
+   ------------------------------------------------------------------------ */
+
+.bar {
+  padding: 8px 10px 6px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.session-select {
+  width: 100%;
+  background: var(--vscode-dropdown-background);
+  color: var(--vscode-dropdown-foreground);
+  border: 1px solid var(--vscode-dropdown-border, var(--border));
+  padding: 3px 4px;
+  font: inherit;
+  border-radius: 2px;
+}
+
+.session-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.live-badge {
+  font-size: 0.9em;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.live-badge.busy {
+  color: var(--fg);
+}
+
+.pulse {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+  margin-right: 3px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.segmented {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.segmented button {
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  padding: 2px 8px;
+  font: inherit;
+  font-size: 0.92em;
+  cursor: pointer;
+}
+
+.segmented button.on {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}
+
+.float-button {
+  margin-left: auto;
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 8px;
+  font: inherit;
+  font-size: 0.92em;
+  cursor: pointer;
+}
+
+.float-button:hover {
+  background: var(--vscode-list-hoverBackground);
+}
+
+/* The bookmarks list. */
+
+.marks {
+  margin-left: auto;
+}
+
+.marks ~ .float-button {
+  margin-left: 0;
+}
+
+.marks-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 7px;
+  font: inherit;
+  font-size: 0.92em;
+  cursor: pointer;
+}
+
+.marks-button svg {
+  color: var(--accent);
+}
+
+.marks-button:hover,
+.marks-button.on {
+  background: var(--vscode-list-hoverBackground);
+}
+
+.marks-list {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: calc(100% - 2px);
+  z-index: 20;
+  max-height: min(60vh, 320px);
+  overflow-y: auto;
+  padding: 4px;
+  background: var(
+    --vscode-menu-background,
+    var(--vscode-editorWidget-background, var(--bg))
+  );
+  color: var(--vscode-menu-foreground, var(--fg));
+  border: 1px solid var(--vscode-menu-border, var(--border));
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  animation: reveal 150ms ease-out both;
+}
+
+.mark {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 6px;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.mark:hover {
+  background: var(--vscode-list-hoverBackground);
+}
+
+.mark-icon {
+  display: inline-flex;
+  color: var(--accent);
+  padding-top: 0.35em;
+  flex-shrink: 0;
+}
+
+.mark-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mark-label,
+.mark-note {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mark-note {
+  color: var(--muted);
+  font-size: 0.9em;
+}
+
+/* ---------------------------------------------------------------------------
+   Timeline: prompts, messages, code
+   ------------------------------------------------------------------------ */
+
+.scroller {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 10px 40px;
+  overflow-x: hidden;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.trimmed-note {
+  color: var(--muted);
+  font-size: 0.88em;
+  text-align: center;
+  padding: 4px 8px 10px;
+  border-bottom: 1px dashed var(--border);
+  margin-bottom: 8px;
+}
+
+.prompt {
+  border-left: 3px solid var(--accent);
+  padding: 4px 8px;
+  margin-top: 6px;
+}
+
+.who {
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.prompt-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 9em;
+  overflow: hidden;
+}
+
+.narration {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.narration.final {
+  border-color: var(--accent);
+}
+
+.rich p {
+  margin: 0.35em 0;
+  word-break: break-word;
+}
+
+.rich p.heading {
+  font-weight: 600;
+}
+
+.rich ul,
+.rich ol {
+  margin: 0.35em 0;
+  padding-left: 1.4em;
+}
+
+.rich li.nested {
+  margin-left: 1.2em;
+}
+
+.rich code,
+.code {
+  font-family: var(--mono);
+  font-weight: var(--vscode-editor-font-weight, normal);
+  font-size: 0.92em;
+  background: var(--code-bg);
+  border-radius: 3px;
+}
+
+.rich code {
+  padding: 0 3px;
+}
+
+.code {
+  font-size: var(--vscode-editor-font-size, 0.92em);
+  display: block;
+  margin: 4px 0;
+  padding: 6px 8px;
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 16em;
+  overflow: auto;
+}
+
+.code.table {
+  white-space: pre;
+  word-break: normal;
+}
+
+.code.failed {
+  border-left: 3px solid var(--err);
+}
+
+.thinking {
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  color: var(--muted);
+}
+
+.error-banner {
+  color: var(--err);
+  border: 1px solid var(--err);
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.92em;
+}
+
+.interrupt {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 0.92em;
+}
+
+.link-text {
+  text-decoration: underline dotted;
+}
+
+/* ---------------------------------------------------------------------------
+   Steps: tool rows, folded steps, subagents
+   ------------------------------------------------------------------------ */
+
+.tool-head,
+.steps-head,
+.agent-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 1px 2px;
+  border-radius: 3px;
+  color: var(--muted);
+}
+
+.tool-head {
+  flex-wrap: wrap;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background: var(--vscode-list-hoverBackground);
+}
+
+.tool-name {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  flex-shrink: 0;
+}
+
+.tool-title,
+.steps-label {
+  color: var(--fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+}
+
+.steps-latest {
+  color: var(--muted);
+}
+
+.tool.error .tool-title {
+  color: var(--err);
+}
+
+.tool-body,
+.steps-body,
+.agent-body {
+  margin-left: 18px;
+}
+
+.steps-failed {
+  color: var(--err);
+  font-size: 0.85em;
+  flex-shrink: 0;
+}
+
+.status {
+  width: 12px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+.status.ok {
+  color: var(--ok);
+}
+
+.status.error {
+  color: var(--err);
+}
+
+.status.running {
+  height: 10px;
+  width: 10px;
+  margin: 0 1px;
+  border: 2px solid var(--muted);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.gear,
+.chevron {
+  width: 12px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.open-file {
+  color: var(--vscode-textLink-foreground);
+  cursor: pointer;
+  flex-shrink: 0;
+  text-decoration: none;
+  padding: 0 2px;
+}
+
+/* Under a step's headline: what actually ran, and anything flagged. */
+.what-ran {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 6px;
+  min-width: 0;
+  padding-left: 18px;
+}
+
+.ran-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 14em;
+  min-width: 0;
+}
+
+.ran-command,
+.ran-paths {
+  font-family: var(--mono);
+  font-weight: var(--vscode-editor-font-weight, normal);
+  font-size: 0.85em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.ran-command {
+  color: var(--fg);
+  background: var(--code-bg);
+  border-radius: 3px;
+  padding: 0 4px;
+}
+
+.more-lines {
+  font-size: 0.85em;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* A flag, not an alarm: the label says what, the sign and border mark it. */
+.risk {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  padding: 0 6px;
+  border: 1px solid var(--warn);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--warn) 10%, transparent);
+  color: var(--fg);
+  font-size: 0.8em;
+  white-space: nowrap;
+}
+
+.risk svg {
+  color: var(--warn);
+  flex-shrink: 0;
+}
+
+.agent {
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 3px 4px;
+}
+
+.agent-badge {
+  font-size: 0.8em;
+  padding: 0 5px;
+  border-radius: 8px;
+  background: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+  flex-shrink: 0;
+}
+
+.agent-count {
+  font-size: 0.8em;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.agent-body {
+  margin: 4px 0 2px 6px;
+}
+
+/* ---------------------------------------------------------------------------
+   Times, bookmarks and notes
+   ------------------------------------------------------------------------ */
+
+.took,
+.stamp {
+  color: var(--muted);
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.took:empty {
+  display: none;
+}
+
+/* Prompts and messages: the time and the actions float on the first line. */
+.corner {
+  float: right;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+}
+
+.actions {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.act {
+  display: inline-flex;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 2px 3px;
+  border-radius: 3px;
+  cursor: pointer;
+  opacity: 0;
+}
+
+/* Shown on hover and keyboard focus; a set bookmark stays as the marker. */
+.tool-head:hover .act,
+.agent-head:hover .act,
+[data-id]:hover > .corner .act,
+.actions:focus-within .act,
+.act.on {
+  opacity: 1;
+}
+
+.act.on,
+.inner-marks {
+  color: var(--accent);
+}
+
+.act:hover {
+  color: var(--fg);
+  background: var(
+    --vscode-toolbar-hoverBackground,
+    var(--vscode-list-hoverBackground)
+  );
+}
+
+.inner-marks {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.note {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 3px 0 0 12px;
+  padding: 4px 8px;
+  border-left: 2px solid var(--accent);
+  border-radius: 0 4px 4px 0;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  font-size: 0.92em;
+}
+
+.note-icon {
+  display: inline-flex;
+  color: var(--accent);
+  padding-top: 0.3em;
+}
+
+.note-text {
+  flex: 1;
+  min-width: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Over the note's corner on hover, so they take no width from the text. */
+.note-actions {
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  display: inline-flex;
+  gap: 8px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--bg);
+  opacity: 0;
+}
+
+.note:hover .note-actions,
+.note-actions:focus-within {
+  opacity: 1;
+}
+
+.note-actions button,
+.note-buttons button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: var(--vscode-textLink-foreground);
+  font: inherit;
+  font-size: 0.92em;
+  cursor: pointer;
+}
+
+.note.editing {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.note textarea {
+  width: 100%;
+  resize: vertical;
+  font: inherit;
+  color: var(--vscode-input-foreground, var(--fg));
+  background: var(--vscode-input-background, var(--bg));
+  border: 1px solid var(--vscode-input-border, var(--border));
+  border-radius: 3px;
+  padding: 4px 6px;
+}
+
+.note-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.note-buttons button.primary {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  padding: 1px 10px;
+  border-radius: 3px;
+}
+
+.hint {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.85em;
+}
+
+/* ---------------------------------------------------------------------------
+   Jump to the latest
+   ------------------------------------------------------------------------ */
+
+.jump {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: none;
+  border-radius: 12px;
+  padding: 3px 10px;
+  font: inherit;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------------------------------------------------------------------------
+   Narrow windows: the pop-out and slim side bars
+   ------------------------------------------------------------------------ */
+
+@media (max-width: 380px) {
+  .bar {
+    padding: 4px 6px;
+    gap: 4px;
+  }
+
+  .live-badge.idle,
+  .live-badge.past {
+    display: none;
+  }
+
+  /* Keep just the pulsing dot as the "working" signal. */
+  .live-badge.busy {
+    font-size: 0;
+  }
+
+  .live-badge.busy .pulse {
+    margin: 0;
+  }
+
+  .segmented button {
+    padding: 1px 6px;
+  }
+
+  .scroller {
+    padding: 6px 6px 36px;
+  }
+
+  .narration {
+    padding: 4px 8px;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion. Short (120-250 ms), opacity and transform only, and only for
+   things that change while you watch: the initial history never animates.
+   Everything here is switched off by the reduce-motion rules at the end.
+   ------------------------------------------------------------------------ */
+
+/* New entries that arrive live rise into place. */
+.row.fresh {
+  animation: enter 180ms ease-out both;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* A step that finishes while on screen: a small pop for success... */
+.status.just-ok,
+.gear.just-ok {
+  display: inline-block;
+  animation: pop 220ms cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.4);
+    opacity: 0.4;
+  }
+}
+
+/* ...and one brief red flash for a failure. No shaking. */
+.tool.just-failed > .tool-head,
+.steps-head:has(.gear.just-failed) {
+  animation: flash 700ms ease-out;
+}
+
+@keyframes flash {
+  from {
+    background: color-mix(in srgb, var(--err) 28%, transparent);
+  }
+}
+
+/* Opening folded steps, tool output and helper boxes fades them in. */
+.tool-body,
+.steps-body,
+.agent-body {
+  animation: reveal 150ms ease-out both;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+}
+
+.jump {
+  animation: rise 160ms ease-out both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* "Claude is thinking": shown while the agent works between steps. */
+.thinking-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.92em;
+  padding: 10px 4px 2px;
+  animation: enter 180ms ease-out both;
+}
+
+.dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: breathe 1.2s ease-in-out infinite;
+}
+
+.dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes breathe {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+/* A row the status bar asked to show (a failed step): outlined, then the
+   outline fades. Under reduce motion it stays outlined until the class goes. */
+[data-id].flash {
+  outline: 2px solid var(--vscode-focusBorder);
+  outline-offset: 1px;
+  animation: reveal-flash 2s ease-out forwards;
+}
+
+@keyframes reveal-flash {
+  0%,
+  60% {
+    outline-color: var(--vscode-focusBorder);
+  }
+  100% {
+    outline-color: transparent;
+  }
+}
+
+/* Reduce motion: VS Code adds this class when the user asks for less motion
+   in VS Code; the media query covers the system setting and the browser.
+   Spinners and dots stay visible, just still. */
+body.vscode-reduce-motion *,
+body.vscode-reduce-motion *::before,
+body.vscode-reduce-motion *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Accessibility
+   ------------------------------------------------------------------------ */
+
+/* High-contrast themes: the theme's own contrast border, no tinted fills. */
+body.vscode-high-contrast {
+  --border: var(--vscode-contrastBorder, currentColor);
+  --card: transparent;
+  --code-bg: transparent;
+}
+
+body.vscode-high-contrast .code,
+body.vscode-high-contrast .agent-badge,
+body.vscode-high-contrast .ran-command {
+  border: 1px solid var(--border);
+}
+
+body.vscode-high-contrast .risk {
+  background: transparent;
+}
+
+/* Read by screen readers, not shown. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Keyboard focus is always visible. */
+[role='button']:focus-visible,
+button:focus-visible,
+select:focus-visible,
+a:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 1px;
+}

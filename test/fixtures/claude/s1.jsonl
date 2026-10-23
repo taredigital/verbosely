@@ -1,0 +1,18 @@
+{"type":"queue-operation","operation":"enqueue","timestamp":"2026-10-20T10:00:00.000Z","sessionId":"s1"}
+{"parentUuid":null,"isSidechain":false,"type":"user","uuid":"u1","timestamp":"2026-10-20T10:00:01.000Z","sessionId":"s1","origin":{"kind":"human"},"message":{"role":"user","content":[{"type":"text","text":"Test the snooze button"}]}}
+{"parentUuid":"u1","isSidechain":false,"type":"attachment","uuid":"att1","timestamp":"2026-10-20T10:00:01.100Z","attachment":{"type":"date","content":"<system-reminder>Today is Tuesday</system-reminder>"}}
+{"parentUuid":"u1","isSidechain":false,"type":"user","uuid":"u1meta","isMeta":true,"timestamp":"2026-10-20T10:00:01.200Z","message":{"role":"user","content":[{"type":"text","text":"[Image: source: C:\\tmp\\1.png]"}]}}
+{"parentUuid":"u1","isSidechain":false,"type":"assistant","uuid":"a1","timestamp":"2026-10-20T10:00:02.000Z","thinkingDurationMs":6000,"message":{"id":"msg_1","role":"assistant","content":[{"type":"thinking","thinking":"","signature":"abc"}]}}
+{"parentUuid":"a1","isSidechain":false,"type":"assistant","uuid":"a2","timestamp":"2026-10-20T10:00:03.000Z","message":{"id":"msg_1","role":"assistant","content":[{"type":"text","text":"Test 1 passed: the snooze rang on time. Now moving to **Test 2**."}]}}
+{"parentUuid":"a2","isSidechain":false,"type":"assistant","uuid":"a3","timestamp":"2026-10-20T10:00:04.000Z","message":{"id":"msg_1","role":"assistant","content":[{"type":"tool_use","id":"toolu_bash1","name":"Bash","input":{"command":"adb shell dumpsys deviceidle force-idle","description":"Force the phone into Doze"}}]}}
+{"parentUuid":"a3","isSidechain":false,"type":"user","uuid":"u2","timestamp":"2026-10-20T10:00:05.000Z","toolUseResult":"Error: Exit code 1","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_bash1","is_error":true,"content":"Exit code 1\nadb.exe: no devices/emulators found"}]}}
+{"parentUuid":"u2","isSidechain":false,"type":"assistant","uuid":"a4","timestamp":"2026-10-20T10:00:06.000Z","message":{"id":"msg_2","role":"assistant","content":[{"type":"tool_use","id":"toolu_edit1","name":"Edit","input":{"file_path":"D:\\proj\\src\\Alarm.kt","old_string":"a","new_string":"b"}}]}}
+{"parentUuid":"a4","isSidechain":false,"type":"user","uuid":"u3","timestamp":"2026-10-20T10:00:07.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_edit1","content":"The file was updated."}]}}
+{"parentUuid":"u3","isSidechain":false,"type":"assistant","uuid":"a5","timestamp":"2026-10-20T10:00:08.000Z","message":{"id":"msg_3","role":"assistant","content":[{"type":"tool_use","id":"toolu_agent1","name":"Agent","input":{"subagent_type":"Explore","description":"Find the alarm scheduler","prompt":"Look for..."}}]}}
+{"type":"api-request-blob","sessionId":"s1","hash":"deadbeef","blob":"..."}
+{"parentUuid":"a5","isSidechain":false,"type":"system","subtype":"api_error","uuid":"sys1","timestamp":"2026-10-20T10:00:09.000Z","error":{"message":"Connection error.","formatted":"Connection dropped (ECONNRESET)"},"retryAttempt":1,"maxRetries":10}
+{"parentUuid":"sys1","isSidechain":false,"type":"user","uuid":"u4","timestamp":"2026-10-20T10:00:10.000Z","origin":{"kind":"task-notification"},"message":{"role":"user","content":"<task-notification><task-id>x</task-id></task-notification>"}}
+{"parentUuid":"u4","isSidechain":false,"type":"user","uuid":"u5","timestamp":"2026-10-20T10:00:11.000Z","message":{"role":"user","content":[{"type":"text","text":"[Request interrupted by user]"}]}}
+{"type":"ai-title","aiTitle":"Snooze testing","sessionId":"s1"}
+{"type":"some-future-record","whatever":true}
+not json at all

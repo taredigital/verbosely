@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Verbosely: a speech bubble whose tail threads down through the steps. -->
+  <path d="M7 3h11a3.5 3.5 0 0 1 0 7H8.5L6.5 12V10H7a3.5 3.5 0 0 1 0-7z"/>
+  <path d="M6.5 12v7"/>
+  <circle cx="6.5" cy="15.5" r="1.4" fill="currentColor" stroke="none"/>
+  <path d="M10 15.5h9"/>
+  <circle cx="6.5" cy="20" r="1.4" fill="currentColor" stroke="none"/>
+  <path d="M10 20h6"/>
+</svg>

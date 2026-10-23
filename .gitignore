@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+*.vsix
+.DS_Store
+
+# Notes for local Claude Code sessions; not part of the project.
+CLAUDE.md
+.claude/

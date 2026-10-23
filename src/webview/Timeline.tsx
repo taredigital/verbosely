@@ -310,7 +310,13 @@ function ToolRow({
             ↗
           </a>
         )}
-        <WhatRan tool={tool} workspace={workspace} />
+        <WhatRan
+          tool={tool}
+          workspace={workspace}
+          detailShown={
+            open && Boolean(tool.detail && tool.detail !== tool.title)
+          }
+        />
       </div>
       {open && hasMore && (
         <div class="tool-body">
@@ -333,18 +339,27 @@ function ToolRow({
 
 /**
  * Under a step's headline (the agent's own words): what actually ran, the
- * files it touched and anything worth a second look.
+ * files it touched and anything worth a second look. While the row is open
+ * its details show the whole command or path, so only the flags stay here.
  */
-function WhatRan({ tool, workspace }: { tool: ToolItem; workspace?: string }) {
+function WhatRan({
+  tool,
+  workspace,
+  detailShown,
+}: {
+  tool: ToolItem;
+  workspace?: string;
+  detailShown: boolean;
+}) {
   // The feed re-renders every few seconds for its clocks; a command can be long.
   const what = useMemo(() => {
-    const command = shownCommand(tool);
+    const command = detailShown ? undefined : shownCommand(tool);
     return {
       command,
-      paths: command ? undefined : shownPaths(tool, workspace),
+      paths: command || detailShown ? undefined : shownPaths(tool, workspace),
       risks: stepRisks(tool, workspace),
     };
-  }, [tool, workspace]);
+  }, [tool, workspace, detailShown]);
   const { command, paths, risks } = what;
   if (!command && !paths && !risks.length) return null;
   return (

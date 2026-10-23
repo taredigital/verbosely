@@ -1,35 +1,82 @@
 # Verbosely
 
-**Verbose mode for your coding agent.** See what Claude Code and Codex are actually doing, not just their final answer.
+**Verbose mode for your coding agent.** See what Claude Code and Codex do while they work, not just their final answer.
 
-When Claude Code or Codex runs on auto, its narration, commands, results and failures scroll past or get collapsed. Verbosely keeps that middle layer in a calm, readable feed in your side bar, live as the agent works.
+![Verbosely: the agent's last message, "Fixed.", then the real feed of the turn behind it: its narration, a failed test in red, the steps folding between its messages, every step, and the last message landing.](media/listing/hero.gif)
 
-![The Verbosely feed following Claude Code as it fixes a bug: its narration, the test run that failed, shown in red, the fix, and then every step.](https://taredigital.com/verbosely/listing/feed.gif)
+▶ **[Watch the trailer](https://taredigital.com/verbosely/#trailer)** (46 seconds)
 
-_A real Claude Code session, played back at 4x speed. [Watch the trailer](https://taredigital.com/verbosely/#trailer)._
+On auto, an agent can work for a minute and hand you one line: "Fixed." The eight steps before it, the test that failed, the commit it found, scroll past in a terminal or fold away in a chat panel. Verbosely keeps that middle layer in a calm, readable feed beside your code, live, while the agent works.
 
-## Features
+## Get started
 
-- **Works with Claude Code and Codex.** Sessions from both appear in one picker, labelled by agent.
-- **Live feed** of the session running in your workspace. It follows whichever session is busy.
-- **Narration mode** shows what the agent says and folds the steps in between into one line. Failures always stay visible.
-- **Everything mode** shows every tool call, with its command and output.
-- **What actually ran.** A step's headline is the agent's own description of it, so each row also shows the command or file it really used, and flags steps worth a second look: a downloaded script run in a shell, a file uploaded, a recursive delete, a force push, credentials touched, settings for the agent, git or the editor changed, or a write outside the workspace. Hidden characters in a command are shown, not hidden.
-- **Subagents** appear as boxes you can open to see their own work.
-- **Past sessions** for this folder can be reopened from the session picker.
-- **Open files** the agent read or edited with one click.
-- **Pop out** the feed into a small window that stays on top of your other apps, with the pin button or "Pop Out Feed" in the Command Palette. It has no default key; you can set one in Keyboard Shortcuts. Handy while you watch an emulator or browser.
-- **Float it in your browser.** "Open Feed in Browser" shows the feed in Chrome or Edge, and **Float** puts it in a picture-in-picture window that stays visible even with VS Code minimised.
-- **Status bar** shows whether the agent is working and how many steps failed. Click it to see what failed: one failure opens the feed at that step; several are listed first, so you can pick one.
-- **Times.** Each step shows how long it took, prompts and messages show the time, and "working" shows how long the current turn has been running. Turn them off with `verbosely.timestamps`.
-- **Bookmarks and notes.** Hover any row to bookmark it or write a note on it. The bookmark button in the header lists them all, so you can jump back. Bookmarks and notes are saved on this computer, for this workspace, and are never written into the agent's logs or sent to the agent.
-- **Export a session as Markdown**, a readable record of what happened, with your bookmarks and notes. Things that look like secrets (API keys, tokens, private keys) are replaced with `[redacted]`.
+1. Install Verbosely.
+2. Open your project folder in VS Code.
+3. Work with Claude Code or Codex in that folder, the way you already do.
+4. Click the **Verbosely** icon in the activity bar.
 
-![Three views of the feed: Narration with the failed step open, Everything with how long each step took, and a bookmark and a note with the bookmarks list open.](https://taredigital.com/verbosely/listing/screenshots.png)
+The feed finds the session that is working and follows it. There is nothing to set up: no account, no API key, no hooks, no extra tokens. Verbosely reads the session logs the agents already write on your computer, so it works for earlier sessions too.
 
-## How it works
+## Read along as it works
 
-Claude Code and Codex each write a log of every session to your disk as they run. Verbosely reads those logs and nothing else. It needs no setup, uses no tokens, and works for old sessions too.
+<img src="media/listing/read-along.png" width="460" alt="The Narration view: the prompt, the agent's messages in order, a failed test run open in red with its error, and the steps between messages folded into lines such as '3 steps, Show the tuning commit diff'.">
+
+The **Narration** view shows what the agent says, in order. The steps between two messages fold into one line, like "3 steps · Show the tuning commit diff", so you follow the story of the work and open the detail only when you want it.
+
+**When a step fails, it stays open, in red**, with the error the agent got. The status bar counts the failed steps since your last message. Click the count and the feed scrolls to the step and outlines it; with several, you pick one from a list.
+
+## See every step, and what actually ran
+
+<img src="media/listing/every-step.png" width="460" alt="The Everything view: each tool call with the agent's description, the command or file under it, such as 'npx vitest run src/client/moveCallout.test.ts', and how long it took.">
+
+Switch to **Everything** for every tool call. Each row shows the agent's description of the step and, under it, the command it really ran or the file it touched, with how long it took. Click a row for its output.
+
+That second line matters. A step's headline is the agent's own words, and an agent that has been misled, for example by instructions planted in a web page it read, could describe `curl … | sh` as "Run the tests". So Verbosely also flags steps by what ran:
+
+- a downloaded script run in a shell
+- a file uploaded
+- a recursive delete, a force push, or discarded changes
+- credentials touched, such as `.env` or `~/.ssh`
+- settings for the agent, git or the editor changed
+- a write outside the workspace
+- hidden characters in a command (they are shown as `⟨U+202E⟩`, not hidden)
+
+Flags never block anything. They make sure you notice, and a flagged step stays visible when the Narration view folds its group.
+
+## Keep it in view
+
+![The feed in an editor's side bar; the pointer clicks the pin and the feed lifts into its own window, floating over a browser game while the agent keeps working.](media/listing/pop-out.gif)
+
+Click the pin in the feed's title bar (or run **Verbosely: Pop Out Feed**) and the feed moves into its own small window that floats above your other apps (VS Code 1.100 or later). Handy while you test in an emulator, a browser or a game.
+
+**Open Feed in Browser** shows the same feed in Chrome or Edge, and **Float** puts it in a picture-in-picture window that stays visible even with VS Code minimised. The browser view can only watch.
+
+## Mark what matters
+
+<img src="media/listing/bookmarks-notes.png" width="460" alt="A bookmark on the failed step and a note under the agent's finding, with the bookmarks list open in the header.">
+
+Hover any row to bookmark it or write a note under it. The bookmark button in the header lists them, so you can jump back. Notes are for you: they stay on this computer, for this workspace, and are never written into the agent's logs or sent to the agent.
+
+When you are done, **Export Session as Markdown** gives you a readable record of the session, with your bookmarks, notes and step times. Things that look like secrets (API keys, tokens, private keys) are replaced with `[redacted]`.
+
+## Also in the feed
+
+- **Subagents.** When Claude Code hands work to a subagent, its steps appear in a box under the step that started it.
+- **Past sessions.** The session picker lists earlier sessions in this folder, from both agents. Pick one to read it; **Follow Live Session** goes back to following.
+- **Times.** Prompts and messages show the time, and "working" shows how long the turn has run, such as `working · 5m 32s`. Turn them off with `verbosely.timestamps`.
+- **Your theme.** It follows VS Code's colours and fonts, light, dark or high contrast, works from the keyboard, and turns its small animations off when you ask VS Code or your system to reduce motion.
+
+## Commands
+
+| Command                               | What it does                                        |
+| ------------------------------------- | --------------------------------------------------- |
+| Verbosely: Pop Out Feed               | The feed in its own window, above other apps        |
+| Verbosely: Open Feed in Browser       | The feed in Chrome or Edge, with picture-in-picture |
+| Verbosely: Follow Live Session        | Go back to following the session that is working    |
+| Verbosely: Show Failed Steps          | Jump to what failed since your last message         |
+| Verbosely: Export Session as Markdown | A record of the session, with bookmarks and notes   |
+
+There are no default keyboard shortcuts, so nothing clashes with yours. Set your own in **Keyboard Shortcuts**.
 
 ## Privacy and security
 
@@ -57,6 +104,7 @@ The last three are read from your user settings only.
 
 ## Limits
 
+- Sessions are matched to the folder they ran in. A session started in a subfolder of your workspace shows when that subfolder is the open folder. In a multi-root workspace, the first folder is watched.
 - The agent's private reasoning is usually stored encrypted, so it can't be shown. Readable progress updates are shown.
 - The log format isn't officially documented. If an agent update changes it, entries the extension doesn't recognise are skipped until it is updated.
 
@@ -76,7 +124,7 @@ Press F5 in VS Code to run the extension in a development window.
 The code is in `src/`:
 
 - `adapters/` reads each agent's logs (`ClaudeAdapter`, `CodexAdapter`) into one event model (`core/events.ts`).
-- `core/` follows the log files (`JsonlTailer`), folds events into feed items (`FeedStore`), tracks sessions (`FeedController`) and keeps bookmarks and notes (`annotations.ts`).
+- `core/` follows the log files (`JsonlTailer`), folds events into feed items (`FeedStore`), tracks sessions (`FeedController`), flags steps by what ran (`risk.ts`) and keeps bookmarks and notes (`annotations.ts`).
 - `view/` and `server/` are the VS Code side: the side bar, the pop-out, the status bar and the browser view's local server.
 - `webview/` is the feed's UI, in Preact. The same bundle runs in the side bar, the pop-out and the browser page.
 - `shared/protocol.ts` is the message contract between the two halves.
